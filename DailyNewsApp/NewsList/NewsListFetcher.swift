@@ -21,7 +21,8 @@ class NewsListFetcher: NewsDataDelegate {
                 }
             }
         } else {
-            // completion(nil, "")
+            let error = NSError(domain: "", code: 0, userInfo: [ NSLocalizedDescriptionKey: "No Internet. Please try again later"])
+            completion(nil, error)
         }
     }
     

@@ -31,6 +31,8 @@
 		5442324827DC7FE2005AB188 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5442324627DC7FE2005AB188 /* Main.storyboard */; };
 		5442324A27DCB0C8005AB188 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5442324927DCB0C8005AB188 /* Localizable.strings */; };
 		5442324C27DCD44D005AB188 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442324B27DCD44D005AB188 /* ImageLoader.swift */; };
+		5442324E27DCE9CD005AB188 /* CommonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442324D27DCE9CD005AB188 /* CommonExtension.swift */; };
+		5442325027DCF945005AB188 /* NewsListCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442324F27DCF945005AB188 /* NewsListCellViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		5442324727DC7FE2005AB188 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5442324927DCB0C8005AB188 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		5442324B27DCD44D005AB188 /* ImageLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		5442324D27DCE9CD005AB188 /* CommonExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExtension.swift; sourceTree = "<group>"; };
+		5442324F27DCF945005AB188 /* NewsListCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsListCellViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +185,7 @@
 				5442323827DC73F1005AB188 /* NewsListFetcher.swift */,
 				5442323F27DC75AE005AB188 /* MockNewsListFetcher.swift */,
 				5442324427DC7970005AB188 /* NewsListCell.swift */,
+				5442324F27DCF945005AB188 /* NewsListCellViewModel.swift */,
 			);
 			path = NewsList;
 			sourceTree = "<group>";
@@ -215,6 +220,7 @@
 		5442324327DC766D005AB188 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				5442324D27DCE9CD005AB188 /* CommonExtension.swift */,
 				5442322F27DC6859005AB188 /* Constants.swift */,
 			);
 			path = Utility;
@@ -352,6 +358,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5442325027DCF945005AB188 /* NewsListCellViewModel.swift in Sources */,
 				5442323927DC73F1005AB188 /* NewsListFetcher.swift in Sources */,
 				5442323E27DC757C005AB188 /* NewsDataDelegate.swift in Sources */,
 				5442322927DC5990005AB188 /* EndPoint.swift in Sources */,
@@ -368,6 +375,7 @@
 				5442322827DC5990005AB188 /* NetworkRechability.swift in Sources */,
 				544231F527DC5975005AB188 /* SceneDelegate.swift in Sources */,
 				5442323C27DC7548005AB188 /* News.swift in Sources */,
+				5442324E27DCE9CD005AB188 /* CommonExtension.swift in Sources */,
 				5442323727DC73E3005AB188 /* NewsListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -54,15 +54,28 @@ class NewsListViewController: UIViewController {
         view.addSubview(newsListTableView)
         view.addSubview(errorLabel)
         view.addSubview(tryAgainButton)
-        setupMenuButton()
+        //        setupMenuButton()
+        setUpPullToRefresh()
         setupConstraints()
         loadNewsData()
     }
     
+    func setUpPullToRefresh() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        newsListTableView.refreshControl = refreshControl
+    }
+    
+    @objc private func refresh(refreshControl: UIRefreshControl) {
+        loadNewsData()
+        refreshControl.endRefreshing()
+    }
+    
     @objc private func loadNewsData() {
+        self.showLoader()
         viewModel.getNewsData(searchQuery: "", category: .entertainment, pageNumber: 0) {[weak self] newsList, error in
-            DispatchQueue.main.async { [weak self] in 
-                
+            DispatchQueue.main.async { [weak self] in
+                self?.hideLoader()
                 guard let weakSelf = self else {
                     return
                 }
@@ -79,7 +92,7 @@ class NewsListViewController: UIViewController {
                         weakSelf.newsListTableView.isHidden = true
                     }
                 } else {
-#warning("Add alert")
+                    weakSelf.showAlertMessage(title: NSLocalizedString("ERROR", comment: ""), message: error?.localizedDescription, style: .alert)
                     weakSelf.newsListTableView.isHidden = true
                     weakSelf.errorLabel.isHidden = false
                     weakSelf.tryAgainButton.isHidden = false
@@ -104,15 +117,14 @@ class NewsListViewController: UIViewController {
         tryAgainButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
     }
     
-    private func setupMenuButton() {
-        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(menuButtonTapped))
-        self.navigationItem.leftBarButtonItem  = menuButton
-        
-    }
+    //    private func setupMenuButton() {
+    //        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(menuButtonTapped))
+    //        self.navigationItem.leftBarButtonItem  = menuButton
+    //    }
     
-    @objc func menuButtonTapped() {
-        
-    }
+    //    @objc func menuButtonTapped() {
+    //
+    //    }
 }
 
 extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
@@ -124,21 +136,9 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
         if let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? NewsListCell {
             let newsObject = newsListArray[indexPath.row]
             cell.newsTitleLabel.text = newsObject.title
+            cell.tag = indexPath.row
             cell.newsDescriptionLabel.text = newsObject.description
-            
-            if let imagePath = newsObject.imageUrl {
-                cell.actvityIndicator.startAnimating()
-                viewModel.getNewsImage(path: imagePath) { imageData, error in
-                    DispatchQueue.main.async {
-                        cell.actvityIndicator.stopAnimating()
-                        if let imageData = imageData {
-                            cell.newsImageView.image = UIImage(data: imageData)
-                        } else {
-                            cell.newsImageView.image = UIImage(named: "Placeholder")
-                        }
-                    }
-                }
-            }
+            cell.loadNewsImage(path: newsObject.imageUrl, index: indexPath)
             return cell
         } else {
             return UITableViewCell()

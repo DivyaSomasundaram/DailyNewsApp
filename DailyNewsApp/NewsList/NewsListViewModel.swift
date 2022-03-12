@@ -20,11 +20,4 @@ class NewsListViewModel {
             completion(newsList, error)
         })
     }
-    
-    func getNewsImage(path: String, completion: @escaping((_ imageData: Data?,_ error: Error?) ->())) {
-        let imageLoader = ImageLoader.init(path: path)
-        imageLoader.loadImage {  imageData , error in
-            completion(imageData, error)
-        }
-    }
 }

@@ -2,7 +2,7 @@
 //  Constants.swift
 //  DailyNewsApp
 //
-//  Created by MobiloApps on 12/03/22.
+//  Created by Divya Dinesh on 12/03/22.
 //
 
 import Foundation
@@ -21,7 +21,7 @@ struct Constants {
         static let DEFAULT_PADDING: CGFloat = 10
         static let TITLE_PADDING: CGFloat = 20
         static let TITLE_FONT_SIZE: CGFloat = 16
-        static let ERROR_TITLE_FONT_SIZE: CGFloat = 20
+        static let ERROR_TITLE_FONT_SIZE: CGFloat = 18
         static let DESCRIPTION_FONT_SIZE: CGFloat = 14
      }
 }

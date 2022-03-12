@@ -8,6 +8,8 @@
 import UIKit
 
 class NewsListCell: UITableViewCell {
+    
+    let viewModel = NewsListCellViewModel()
     lazy var newsTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -47,10 +49,14 @@ class NewsListCell: UITableViewCell {
         actvityIndicator.color = .white
         return actvityIndicator
     }()
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
     }
     
     private func setupUI() {
@@ -80,7 +86,18 @@ class NewsListCell: UITableViewCell {
         actvityIndicator.centerYAnchor.constraint(equalTo: self.newsImageView.centerYAnchor).isActive = true
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+    func loadNewsImage(path: String?, index: IndexPath) {
+        if let imagePath = path, self.tag == index.row {
+            self.newsImageView.image = UIImage(named: "Placeholder")
+            self.actvityIndicator.startAnimating()
+            viewModel.getNewsImage(path: imagePath) { imageData, error in
+                DispatchQueue.main.async {
+                    self.actvityIndicator.stopAnimating()
+                    if let imageData = imageData {
+                        self.newsImageView.image = UIImage(data: imageData)
+                    }
+                }
+            }
+        }
     }
 }
