@@ -6,4 +6,6 @@
   
 */
 
-"DAILY_NEWS"  =  "Daily News";
+"DAILY_NEWS"    =    "Daily News";
+"ERROR_TEXT"    =    "Something went wrong.Please try again.";
+"TRY_AGAIN"     =    "Try again";

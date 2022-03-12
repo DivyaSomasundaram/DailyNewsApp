@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import UIKit
 
 class NewsListViewModel {
-    var newsListArray = [News]()
     var newsListFetcher: NewsDataDelegate?
     
     init(fetcher: NewsDataDelegate? = NewsListFetcher()) {
@@ -16,11 +16,15 @@ class NewsListViewModel {
     }
     
     func getNewsData(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
-        newsListFetcher?.fetchNews(searchQuery: searchQuery, category: category, pageNumber: pageNumber, completion: { [weak self] newsList, error in
-            guard let weakSelf = self else {
-                return
-            }
-            weakSelf.newsListArray = newsList ?? []
+        newsListFetcher?.fetchNews(searchQuery: searchQuery, category: category, pageNumber: pageNumber, completion: { newsList, error in
+            completion(newsList, error)
         })
+    }
+    
+    func getNewsImage(path: String, completion: @escaping((_ imageData: Data?,_ error: Error?) ->())) {
+        let imageLoader = ImageLoader.init(path: path)
+        imageLoader.loadImage {  imageData , error in
+            completion(imageData, error)
+        }
     }
 }

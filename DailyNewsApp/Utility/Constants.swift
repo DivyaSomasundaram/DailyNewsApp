@@ -15,11 +15,13 @@ struct Constants {
     }
     
     struct NewsListConstants {
-        static let DEFAULT_CELL_HEIGHT: CGFloat = 110
-        static let NEWS_IMAGE_HEIGHT: CGFloat = 120
-        static let NEWS_IMAGE_WIDTH: CGFloat = 120
+        static let DEFAULT_CELL_HEIGHT: CGFloat = 130
+        static let NEWS_IMAGE_HEIGHT: CGFloat = 90
+        static let NEWS_IMAGE_WIDTH: CGFloat = 110
         static let DEFAULT_PADDING: CGFloat = 10
-        static let TITLE_FONT_SIZE: CGFloat = 20
-        static let DESCRIPTION_FONT_SIZE: CGFloat = 15
+        static let TITLE_PADDING: CGFloat = 20
+        static let TITLE_FONT_SIZE: CGFloat = 16
+        static let ERROR_TITLE_FONT_SIZE: CGFloat = 20
+        static let DESCRIPTION_FONT_SIZE: CGFloat = 14
      }
 }
