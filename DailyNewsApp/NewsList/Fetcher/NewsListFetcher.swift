@@ -30,12 +30,17 @@ class NewsListFetcher: NewsDataDelegate {
     /// - Parameter data: data from the server
     func processResponse(_ data: Data, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
         do {
-//            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-//            print(json)
+            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+            print(json)
             let decoder = JSONDecoder()
             let newsListResponse = try decoder.decode(NewsAPIResponse.self, from: data)
-            let newsList = newsListResponse.articles
-            completion (newsList, nil)
+            if newsListResponse.status == NetworkAPIStatus.ok.rawValue {
+                let newsList = newsListResponse.articles
+                completion (newsList, nil)
+            } else if newsListResponse.status == NetworkAPIStatus.error.rawValue {
+                let error = NSError(domain: "", code: 0, userInfo: [ NSLocalizedDescriptionKey: newsListResponse.message ?? "Network error.Please try again."])
+                completion(nil, error)
+            }
         } catch {
             completion(nil, error)
             print(error)

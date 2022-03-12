@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NewsCategory: String {
+enum NewsCategory: String, CaseIterable {
     case business
     case entertainment
     case generalhealth

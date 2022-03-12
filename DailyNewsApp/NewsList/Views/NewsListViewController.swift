@@ -10,8 +10,9 @@ import UIKit
 class NewsListViewController: UIViewController {
     
     private let cellIdentifier = "NewsListCell"
-    private let viewModel = NewsListViewModel()
+    var viewModel:NewsListViewModel?
     private var newsListArray = [News]()
+    var indexOfPageToRequest = 0
     
     lazy private var newsListTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -54,7 +55,7 @@ class NewsListViewController: UIViewController {
         view.addSubview(newsListTableView)
         view.addSubview(errorLabel)
         view.addSubview(tryAgainButton)
-        //        setupMenuButton()
+        setupMenuButton()
         setUpPullToRefresh()
         setupConstraints()
         loadNewsData()
@@ -73,7 +74,7 @@ class NewsListViewController: UIViewController {
     
     @objc private func loadNewsData() {
         self.showLoader()
-        viewModel.getNewsData(searchQuery: "", category: .entertainment, pageNumber: 0) {[weak self] newsList, error in
+        viewModel?.getNewsData(searchQuery: "", category: .entertainment, pageNumber: 0) {[weak self] newsList, error in
             DispatchQueue.main.async { [weak self] in
                 self?.hideLoader()
                 guard let weakSelf = self else {
@@ -117,14 +118,22 @@ class NewsListViewController: UIViewController {
         tryAgainButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
     }
     
-    //    private func setupMenuButton() {
-    //        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(menuButtonTapped))
-    //        self.navigationItem.leftBarButtonItem  = menuButton
-    //    }
+    private func setupMenuButton() {
+        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(menuButtonTapped))
+        self.navigationItem.leftBarButtonItem  = menuButton
+    }
     
-    //    @objc func menuButtonTapped() {
-    //
-    //    }
+    @objc func menuButtonTapped() {
+        if let sideMenu = viewModel?.getSideMenu() {
+            sideMenu.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width/2, height: self.view.frame.height)
+            let maskView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
+            maskView.backgroundColor = .lightGray
+            maskView.alpha = 0.8
+            self.view.addSubview(maskView)
+            self.view.addSubview(sideMenu.view)
+            self.addChild(sideMenu)
+        }
+    }
 }
 
 extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
@@ -147,6 +156,29 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.NewsListConstants.DEFAULT_CELL_HEIGHT
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // calculates where the user is in the scrollview
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        
+        if offsetY > contentHeight - scrollView.frame.size.height {
+            
+            // increments the number of the page to request
+            indexOfPageToRequest += 1
+            
+            // call your API for more data
+            viewModel?.getNewsData(searchQuery: "", category: .entertainment, pageNumber: indexOfPageToRequest) {[weak self] newsList, error in
+                DispatchQueue.main.async {
+                    guard let weakSelf = self else { return }
+                    if error == nil, let newsList = newsList {
+                        weakSelf.newsListArray.append(contentsOf: newsList)
+                        weakSelf.newsListTableView.reloadData()
+                    }
+                }
+            }
+        }
     }
 }
 

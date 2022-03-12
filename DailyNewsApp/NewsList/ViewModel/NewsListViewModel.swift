@@ -10,6 +10,7 @@ import UIKit
 
 class NewsListViewModel {
     var newsListFetcher: NewsDataDelegate?
+    weak var coordinator : AppCoordinator?
     
     init(fetcher: NewsDataDelegate? = NewsListFetcher()) {
         self.newsListFetcher = fetcher
@@ -19,5 +20,9 @@ class NewsListViewModel {
         newsListFetcher?.fetchNews(searchQuery: searchQuery, category: category, pageNumber: pageNumber, completion: { newsList, error in
             completion(newsList, error)
         })
+    }
+    
+    func getSideMenu() -> UIViewController? {
+        return coordinator?.getSideMenuViewController()
     }
 }

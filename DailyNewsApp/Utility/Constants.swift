@@ -11,7 +11,7 @@ import UIKit
 struct Constants {
     struct NetworkConstants {
         static let API_KEY = "2271bb4eea8e4f34b7956b595a497f9a"
-        static let DEFAULT_PAGE_SIZE = "100"
+        static let DEFAULT_PAGE_SIZE = "5"
     }
     
     struct NewsListConstants {
