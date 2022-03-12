@@ -7,8 +7,11 @@
 
 import Foundation
 
-class NewsListViewModel: NewsDataDelegate {
-    func getNewsData(searchQuery: String?, category: NewsCategory?, pageNumber: Int?) -> [News] {
-        return []
+class NewsListViewModel {
+    var newsListArray = ["News", "News", "News", "News", "News", "News", "News"]
+    var newsListFetcher: NewsDataDelegate?
+    
+    init(fetcher: NewsDataDelegate? = NewsListFetcher()) {
+        self.newsListFetcher = fetcher
     }
 }

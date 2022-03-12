@@ -12,11 +12,11 @@ enum DailyNewsEndpoint: Endpoint {
     
     /// Endpoint to fetch all the news.
     /// Everything endpoint from https://newsapi.org
-    case getAllNews(searchQuery: String, category: NewsCategory, pageNumber: Int)
+    case getAllNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?)
     
     /// Endpoint to fetch Top headlines.
     /// Top Headlines endpoint from https://newsapi.org
-    case getTopHeadlines(searchQuery: String, category: NewsCategory, pageNumber: Int)
+    case getTopHeadlines(searchQuery: String?, category: NewsCategory?, pageNumber: Int?)
     
     /// Endpoint to fetch image corresponding to News.
     case getImageData(path: String)
@@ -42,17 +42,21 @@ enum DailyNewsEndpoint: Endpoint {
         switch self {
         case .getAllNews(let searchQuery, let category, let pageNumber),
                 .getTopHeadlines(let searchQuery, let category, let pageNumber):
-            let apiKey = Contants.NetworkConstants.API_KEY
+            let apiKey = Constants.NetworkConstants.API_KEY
             var queryParameterArray = [URLQueryItem(name: "api_key", value: apiKey),
-                                       URLQueryItem(name: "page", value: "\(pageNumber)"),
-                                       URLQueryItem(name: "pageSize", value: Contants.NetworkConstants.DEFAULT_PAGE_SIZE)]
-            if !searchQuery.isEmpty {
-                queryParameterArray.append(URLQueryItem(name: "q", value: searchQuery))
+                                       URLQueryItem(name: "pageSize", value: Constants.NetworkConstants.DEFAULT_PAGE_SIZE)]
+            if let searchString = searchQuery, !searchString.isEmpty {
+                queryParameterArray.append(URLQueryItem(name: "q", value: searchString))
             }
             
-            if !category.rawValue.isEmpty {
-                queryParameterArray.append(URLQueryItem(name: "category", value: category.rawValue))
+            if let newsCategory = category, !newsCategory.rawValue.isEmpty {
+                queryParameterArray.append(URLQueryItem(name: "category", value: newsCategory.rawValue))
             }
+            
+            if let pageNumber = pageNumber {
+                queryParameterArray.append(URLQueryItem(name: "page", value: "\(pageNumber)"))
+            }
+            
             return queryParameterArray
         default:
             return nil
