@@ -12,7 +12,7 @@ class NewsListViewController: UIViewController {
     private let cellIdentifier = "NewsListCell"
     private let viewModel = NewsListViewModel()
     
-    lazy var newsListTableView: UITableView = {
+    lazy private var newsListTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -28,9 +28,19 @@ class NewsListViewController: UIViewController {
         view.addSubview(newsListTableView)
         setupMenuButton()
         setupConstraints()
+        loadNewsData()
     }
     
-    func setupConstraints() {
+    private func loadNewsData() {
+        viewModel.getNewsData(searchQuery: "", category: .entertainment, pageNumber: 0) {[weak self] newsList, error in
+            guard let weakSelf = self else {
+                return
+            }
+            weakSelf.newsListTableView.reloadData()
+        }
+    }
+    
+    private func setupConstraints() {
         newsListTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
         newsListTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
         newsListTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
@@ -55,8 +65,8 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? NewsListCell {
-            cell.newsTitleLabel.text = viewModel.newsListArray[indexPath.row]
-            cell.newsDescriptionLabel.text = viewModel.newsListArray[indexPath.row]
+//            cell.newsTitleLabel.text = viewModel.newsListArray[indexPath.row]
+//            cell.newsDescriptionLabel.text = viewModel.newsListArray[indexPath.row]
             cell.newsImageLabel.image = UIImage(named: "Menu")
             return cell
         } else {
