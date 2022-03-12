@@ -9,6 +9,5 @@ import Foundation
 
 class MockNewsListFetcher: NewsDataDelegate {
     func fetchNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping ([News]?, Error?) -> ()) {
-        
     }
 }

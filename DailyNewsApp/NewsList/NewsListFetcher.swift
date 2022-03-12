@@ -29,11 +29,12 @@ class NewsListFetcher: NewsDataDelegate {
     /// - Parameter data: data from the server
     func processResponse(_ data: Data, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
         do {
-            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            print(json)
+//            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+//            print(json)
             let decoder = JSONDecoder()
-            let newsList = try decoder.decode(News.self, from: data)
-          //  completion (newsList, nil)
+            let newsListResponse = try decoder.decode(NewsAPIResponse.self, from: data)
+            let newsList = newsListResponse.articles
+            completion (newsList, nil)
         } catch {
             completion(nil, error)
             print(error)

@@ -35,29 +35,21 @@ enum DailyNewsEndpoint: Endpoint {
     }
     
     var path: String {
-        return "v2/everything"
+        switch self {
+        case .getAllNews(_, _, _):
+            return "v2/everything"
+        case .getTopHeadlines(_, _, _):
+            return "v2/top-headlines"
+        default:
+            return ""
+        }
     }
     
     var parameters: [URLQueryItem]? {
         switch self {
-        case .getAllNews(let searchQuery, let category, let pageNumber),
-                .getTopHeadlines(let searchQuery, let category, let pageNumber):
-            let apiKey = Constants.NetworkConstants.API_KEY
-            var queryParameterArray = [URLQueryItem(name: "api_key", value: apiKey),
-                                       URLQueryItem(name: "pageSize", value: Constants.NetworkConstants.DEFAULT_PAGE_SIZE)]
-            if let searchString = searchQuery, !searchString.isEmpty {
-                queryParameterArray.append(URLQueryItem(name: "q", value: searchString))
-            }
-            
-            if let newsCategory = category, !newsCategory.rawValue.isEmpty {
-                queryParameterArray.append(URLQueryItem(name: "category", value: newsCategory.rawValue))
-            }
-            
-            if let pageNumber = pageNumber {
-                queryParameterArray.append(URLQueryItem(name: "page", value: "\(pageNumber)"))
-            }
-            
-            return queryParameterArray
+        case .getAllNews(let searchQuery, let category, let pageNumber), .getTopHeadlines(let searchQuery, let category, let pageNumber):
+            let queryParameters = setQueryParameters(searchQuery: searchQuery, category: category, pageNumber: pageNumber)
+            return queryParameters
         default:
             return nil
         }
@@ -65,5 +57,25 @@ enum DailyNewsEndpoint: Endpoint {
     
     var method: HTTPMethod {
         return .GET
+    }
+    
+    func setQueryParameters(searchQuery: String?, category: NewsCategory?, pageNumber: Int?) -> [URLQueryItem] {
+        let apiKey = Constants.NetworkConstants.API_KEY
+        var queryParameterArray = [URLQueryItem(name: "apiKey", value: apiKey),
+                                   URLQueryItem(name: "pageSize", value: Constants.NetworkConstants.DEFAULT_PAGE_SIZE)]
+        if let searchString = searchQuery, !searchString.isEmpty {
+            queryParameterArray.append(URLQueryItem(name: "q", value: searchString))
+        }
+        
+        if let newsCategory = category, !newsCategory.rawValue.isEmpty {
+            queryParameterArray.append(URLQueryItem(name: "category", value: newsCategory.rawValue))
+        }
+        
+        if let pageNumber = pageNumber {
+            queryParameterArray.append(URLQueryItem(name: "page", value: "\(pageNumber)"))
+        }
+        queryParameterArray.append(URLQueryItem(name: "country", value: "us"))
+
+        return queryParameterArray
     }
 }
