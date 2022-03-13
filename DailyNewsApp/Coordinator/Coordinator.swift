@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Base coordinator.
 class Coordinator {
 
     private(set) var childCoordinators: [Coordinator] = []

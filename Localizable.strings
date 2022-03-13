@@ -10,3 +10,4 @@
 "ERROR_TEXT"    =    "Something went wrong.Please try again.";
 "TRY_AGAIN"     =    "Try again";
 "ERROR"         =    "Error";
+"LOADING"       =    "Loading";

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+/// Handles app naviagtion between pages/ screens.
 class AppCoordinator: Coordinator {
     var window: UIWindow?
     
@@ -15,6 +16,7 @@ class AppCoordinator: Coordinator {
        goToNewsList()
     }
     
+    /// Navigation to News list View Controller.
     func goToNewsList() {
         let newsListViewController = NewsListViewController()
         let newsListViewModel = NewsListViewModel()

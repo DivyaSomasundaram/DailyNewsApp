@@ -8,17 +8,15 @@
 import UIKit
 
 class NewsListViewController: UIViewController {
-    private let cellIdentifier = "NewsListCell"
     var viewModel:NewsListViewModel?
     private var newsListArray = [News]()
-    var indexOfPageToRequest = 0
     
     lazy private var newsListTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(NewsListCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.register(NewsListCell.self, forCellReuseIdentifier: Constants.NewsListConstants.CELL_IDENTIFIER)
         tableView.isHidden = true
         return tableView
     }()
@@ -42,7 +40,7 @@ class NewsListViewController: UIViewController {
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 5
         button.setTitle(NSLocalizedString("TRY_AGAIN", comment: ""), for: .normal)
-        button.addTarget(self, action: #selector(loadData), for: .touchUpInside)
+        button.addTarget(self, action: #selector(loadNewsData), for: .touchUpInside)
         button.isHidden = true
         return button
     }()
@@ -65,18 +63,21 @@ class NewsListViewController: UIViewController {
         newsListTableView.refreshControl = refreshControl
     }
     
+    
+    /// This method gets called when user do pull to refresh.
+    /// - Parameter refreshControl: sender
     @objc private func refresh(refreshControl: UIRefreshControl) {
         loadNewsData()
+        //Resetting page number while doing pull to refresh
+        viewModel?.pageNumber = 0
         refreshControl.endRefreshing()
     }
     
-    @objc private func loadData() {
-        loadNewsData()
-    }
     
-    private func loadNewsData(category: NewsCategory? = .entertainment) {
+    /// Loades news data and updates the UI.
+    @objc private func loadNewsData() {
         self.showLoader()
-        viewModel?.getNewsData(searchQuery: "", category: category, pageNumber: 0) {[weak self] newsList, error in
+        viewModel?.getNewsData() {[weak self] newsList, error in
             DispatchQueue.main.async { [weak self] in
                 self?.hideLoader()
                 guard let weakSelf = self else {
@@ -103,7 +104,7 @@ class NewsListViewController: UIViewController {
             }
         }
     }
-        
+    
     private func setupConstraints() {
         newsListTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.NewsListConstants.TITLE_PADDING).isActive = true
         newsListTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.NewsListConstants.TITLE_PADDING).isActive = true
@@ -120,28 +121,25 @@ class NewsListViewController: UIViewController {
         tryAgainButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
     }
     
-    // Loading View to mask the current view and its actions.
-    func showOverlay() {
-        let overlayView = UIView(frame: (CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)))
-        overlayView.backgroundColor = UIColor.init(white: 0, alpha: 0.5)
-        
-        let gestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(dismissSideBar))
-        gestureRecognizer.numberOfTapsRequired = 1
-        view.addSubview(overlayView)
-    }
-    
-    @objc func dismissSideBar() {
-        
+    private func createSpinnerFooter() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: newsListTableView.frame.size.width, height: Constants.NewsListConstants.FOOTER_HEIGHT))
+        let spinner = UIActivityIndicatorView()
+        spinner.style = .medium
+        footerView.addSubview(spinner)
+        spinner.startAnimating()
+        spinner.center = footerView.center
+        return footerView
     }
 }
 
+// MARK: Table view Delegate.
 extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return newsListArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? NewsListCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: Constants.NewsListConstants.CELL_IDENTIFIER, for: indexPath) as? NewsListCell {
             let newsObject = newsListArray[indexPath.row]
             cell.newsTitleLabel.text = newsObject.title
             cell.tag = indexPath.row
@@ -160,16 +158,16 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // calculates where the user is in the scrollview
         let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
+        let contentHeight = newsListTableView.contentSize.height
         
-        if offsetY > contentHeight - scrollView.frame.size.height {
-            
-            // increments the number of the page to request
-            indexOfPageToRequest += 1
-            
-            // call your API for more data
-            viewModel?.getNewsData(searchQuery: "", category: .entertainment, pageNumber: indexOfPageToRequest) {[weak self] newsList, error in
+        if offsetY > contentHeight - scrollView.frame.size.height && contentHeight > 0 {
+            // calling API for more data.
+            guard !(viewModel?.isPaginating ?? false) else { return }
+            self.newsListTableView.tableFooterView = createSpinnerFooter()
+            viewModel?.getNewsData(pagination: true) {[weak self] newsList, error in
+                guard let weakSelf = self else { return }
                 DispatchQueue.main.async {
+                    weakSelf.newsListTableView.tableFooterView = nil
                     guard let weakSelf = self else { return }
                     if error == nil, let newsList = newsList {
                         weakSelf.newsListArray.append(contentsOf: newsList)

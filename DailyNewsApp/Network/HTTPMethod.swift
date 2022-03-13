@@ -7,6 +7,7 @@
 
 import Foundation
 
+///Enum defines different http method for rest API>
 enum HTTPMethod: String {
 case GET
 case POST

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// List of news categories
 enum NewsCategory: String, CaseIterable {
     case business
     case entertainment

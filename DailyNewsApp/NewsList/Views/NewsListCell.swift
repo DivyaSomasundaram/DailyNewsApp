@@ -15,7 +15,7 @@ class NewsListCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: Constants.NewsListConstants.TITLE_FONT_SIZE)
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .left
         label.backgroundColor = .clear
         return label
@@ -86,6 +86,10 @@ class NewsListCell: UITableViewCell {
         actvityIndicator.centerYAnchor.constraint(equalTo: self.newsImageView.centerYAnchor).isActive = true
     }
     
+    /// Loades news image and updates the cell.
+    /// - Parameters:
+    ///   - path: image path
+    ///   - index: cell index.
     func loadNewsImage(path: String?, index: IndexPath) {
         if let imagePath = path, self.tag == index.row {
             self.newsImageView.image = UIImage(named: "Placeholder")

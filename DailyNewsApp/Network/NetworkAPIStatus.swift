@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Enum defines network API status.
 enum NetworkAPIStatus: String {
     case ok
     case error
