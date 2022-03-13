@@ -2,7 +2,7 @@
 //  DailyNewsAppUITestsLaunchTests.swift
 //  DailyNewsAppUITests
 //
-//  Created by Divya Dinesh on 12/03/22.
+//  Created by MobiloApps on 13/03/22.
 //
 
 import XCTest

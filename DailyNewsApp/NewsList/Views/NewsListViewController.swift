@@ -60,8 +60,16 @@ class NewsListViewController: UIViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         newsListTableView.refreshControl = refreshControl
+        setSubviewAccessibility()
     }
     
+    func setSubviewAccessibility() {
+        guard let titleLabel = newsListTableView.refreshControl?.subviews.first?.subviews.last as? UILabel else {
+            return
+        }
+        titleLabel.isAccessibilityElement = true
+        titleLabel.accessibilityIdentifier = "refresh_control_label"
+    }
     
     /// This method gets called when user do pull to refresh.
     /// - Parameter refreshControl: sender

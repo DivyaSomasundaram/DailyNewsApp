@@ -30,5 +30,7 @@ struct Constants {
     
     struct NewsDetailConstant {
         static let IMAGE_HEIGHT: CGFloat = 1/3
+        static let SERVER_DATE_FORMAT = "YYYY-MM-ddThh:mm:ssZ"
+        static let USER_DATE_FORMAT = "dd-MM-YYYY hh:mm:ss"
     }
 }

@@ -32,10 +32,29 @@ class NewsDetailsViewController: UIViewController {
     lazy private var descriptionTextView: UITextView = {
         let textView = UITextView()
         textView.textColor = .darkGray
-        textView.font = UIFont.boldSystemFont(ofSize: 14)
+        textView.font = UIFont.systemFont(ofSize: 14)
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.backgroundColor = .clear
         return textView
+    }()
+    
+    lazy private var updateOnTitle: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .clear
+        label.text = "Updated on:"
+        return label
+    }()
+    
+    lazy private var publishedDate: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .clear
+        return label
     }()
     
     
@@ -50,11 +69,18 @@ class NewsDetailsViewController: UIViewController {
         self.view.addSubview(newsImageView)
         self.view.addSubview(titleLabel)
         self.view.addSubview(descriptionTextView)
+        self.view.addSubview(updateOnTitle)
+        self.view.addSubview(publishedDate)
+
         setupConstraints()
 
         loadNewsImage()
-        self.titleLabel.text = viewModel?.news?.title
-        self.descriptionTextView.text = viewModel?.news?.description
+        if let news = viewModel?.news {
+            self.titleLabel.text = news.title
+            self.descriptionTextView.text = news.description
+            let publishedDate = news.publishedAt ?? ""
+            self.publishedDate.text = viewModel?.getDateInDisplayFormat(publishedDate)
+        }
     }
     
     func setupConstraints() {
@@ -63,7 +89,13 @@ class NewsDetailsViewController: UIViewController {
         newsImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         newsImageView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: Constants.NewsDetailConstant.IMAGE_HEIGHT).isActive = true
         
-        titleLabel.topAnchor.constraint(equalTo: newsImageView.bottomAnchor, constant: 20).isActive = true
+        updateOnTitle.topAnchor.constraint(equalTo: newsImageView.bottomAnchor, constant: 10).isActive = true
+        updateOnTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        
+        publishedDate.topAnchor.constraint(equalTo: newsImageView.bottomAnchor, constant: 10).isActive = true
+        publishedDate.leadingAnchor.constraint(equalTo: updateOnTitle.trailingAnchor, constant: 10).isActive = true
+        
+        titleLabel.topAnchor.constraint(equalTo: publishedDate.bottomAnchor, constant: 20).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         
