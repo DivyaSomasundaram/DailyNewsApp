@@ -8,7 +8,6 @@
 import UIKit
 
 class NewsListViewController: UIViewController {
-    
     private let cellIdentifier = "NewsListCell"
     var viewModel:NewsListViewModel?
     private var newsListArray = [News]()
@@ -43,7 +42,7 @@ class NewsListViewController: UIViewController {
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 5
         button.setTitle(NSLocalizedString("TRY_AGAIN", comment: ""), for: .normal)
-        button.addTarget(self, action: #selector(loadNewsData), for: .touchUpInside)
+        button.addTarget(self, action: #selector(loadData), for: .touchUpInside)
         button.isHidden = true
         return button
     }()
@@ -55,7 +54,6 @@ class NewsListViewController: UIViewController {
         view.addSubview(newsListTableView)
         view.addSubview(errorLabel)
         view.addSubview(tryAgainButton)
-        setupMenuButton()
         setUpPullToRefresh()
         setupConstraints()
         loadNewsData()
@@ -72,9 +70,13 @@ class NewsListViewController: UIViewController {
         refreshControl.endRefreshing()
     }
     
-    @objc private func loadNewsData() {
+    @objc private func loadData() {
+        loadNewsData()
+    }
+    
+    private func loadNewsData(category: NewsCategory? = .entertainment) {
         self.showLoader()
-        viewModel?.getNewsData(searchQuery: "", category: .entertainment, pageNumber: 0) {[weak self] newsList, error in
+        viewModel?.getNewsData(searchQuery: "", category: category, pageNumber: 0) {[weak self] newsList, error in
             DispatchQueue.main.async { [weak self] in
                 self?.hideLoader()
                 guard let weakSelf = self else {
@@ -101,7 +103,7 @@ class NewsListViewController: UIViewController {
             }
         }
     }
-    
+        
     private func setupConstraints() {
         newsListTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.NewsListConstants.TITLE_PADDING).isActive = true
         newsListTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.NewsListConstants.TITLE_PADDING).isActive = true
@@ -118,21 +120,18 @@ class NewsListViewController: UIViewController {
         tryAgainButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
     }
     
-    private func setupMenuButton() {
-        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(menuButtonTapped))
-        self.navigationItem.leftBarButtonItem  = menuButton
+    // Loading View to mask the current view and its actions.
+    func showOverlay() {
+        let overlayView = UIView(frame: (CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)))
+        overlayView.backgroundColor = UIColor.init(white: 0, alpha: 0.5)
+        
+        let gestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(dismissSideBar))
+        gestureRecognizer.numberOfTapsRequired = 1
+        view.addSubview(overlayView)
     }
     
-    @objc func menuButtonTapped() {
-        if let sideMenu = viewModel?.getSideMenu() {
-            sideMenu.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width/2, height: self.view.frame.height)
-            let maskView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
-            maskView.backgroundColor = .lightGray
-            maskView.alpha = 0.8
-            self.view.addSubview(maskView)
-            self.view.addSubview(sideMenu.view)
-            self.addChild(sideMenu)
-        }
+    @objc func dismissSideBar() {
+        
     }
 }
 

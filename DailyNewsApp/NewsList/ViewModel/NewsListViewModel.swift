@@ -21,8 +21,4 @@ class NewsListViewModel {
             completion(newsList, error)
         })
     }
-    
-    func getSideMenu() -> UIViewController? {
-        return coordinator?.getSideMenuViewController()
-    }
 }

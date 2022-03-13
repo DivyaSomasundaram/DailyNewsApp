@@ -9,14 +9,7 @@ import Foundation
 import UIKit
 
 class AppCoordinator: Coordinator {
-    var parentCoordinator: Coordinator?
-    var children: [Coordinator] = []
-    var navigationController: UINavigationController
-    
-    init(navigationController : UINavigationController) {
-        self.navigationController = navigationController
-        self.navigationController.navigationBar.backgroundColor = .clear
-    }
+    var window: UIWindow?
     
     override func start() {
        goToNewsList()
@@ -27,15 +20,7 @@ class AppCoordinator: Coordinator {
         let newsListViewModel = NewsListViewModel()
         newsListViewModel.coordinator = self
         newsListViewController.viewModel = newsListViewModel
-        navigationController.setViewControllers([newsListViewController], animated: true)
-    }
-    
-    func getSideMenuViewController() -> UIViewController {
-        let newsCategoryListViewController = NewsCategoryViewController()
-        let newsCategoryViewModel = NewsCategoryViewModel()
-        newsCategoryListViewController.viewModel = newsCategoryViewModel
-        let newsCategoryNavigationContrller = UINavigationController(rootViewController: newsCategoryListViewController)
-        self.navigationController.navigationBar.backgroundColor = .white
-        return newsCategoryNavigationContrller
+        let navigationController = UINavigationController(rootViewController: newsListViewController)
+        window?.rootViewController = navigationController
     }
 }
