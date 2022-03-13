@@ -11,6 +11,7 @@ import UIKit
 
 /// View model corresponds to NewsListViewController.
 class NewsListViewModel {
+    var newsListArray = [News]()
     private var newsListFetcher: NewsDataDelegate?
     weak var coordinator : AppCoordinator?
     var searchQuery = ""
@@ -28,7 +29,7 @@ class NewsListViewModel {
     /// - Parameters:
     ///   - pagination: Bool to identify whether it is first request or paginated request.
     ///   - completion: completion handler to send data to viewcontroller
-    func getNewsData(pagination: Bool = false, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
+    func getNewsData(pagination: Bool = false, completion: @escaping(_ error: Error?) -> ()) {
         if pagination {
             isPaginating = true
             // increments the page number to fetch next page data
@@ -37,7 +38,12 @@ class NewsListViewModel {
         newsListFetcher?.fetchNews(searchQuery: searchQuery, category: category, pageNumber: pageNumber, completion: {[weak self] newsList, error in
             guard let weakSelf = self else { return }
             weakSelf.isPaginating = false
-            completion(newsList, error)
+            weakSelf.newsListArray.append(contentsOf: newsList ?? [])
+            completion(error)
         })
+    }
+    
+    func goToNewsDetailPage(news: News) {
+        coordinator?.goToNewsDetailsView(news: news)
     }
 }

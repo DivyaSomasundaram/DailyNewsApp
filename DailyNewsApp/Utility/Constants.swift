@@ -16,15 +16,19 @@ struct Constants {
     
     struct NewsListConstants {
         static let CELL_IDENTIFIER = "NewsListCell"
-        static let DEFAULT_CELL_HEIGHT: CGFloat = 140
+        static let DEFAULT_CELL_HEIGHT: CGFloat = 130
         static let NEWS_IMAGE_HEIGHT: CGFloat = 90
         static let NEWS_IMAGE_WIDTH: CGFloat = 110
         static let DEFAULT_PADDING: CGFloat = 10
-        static let TITLE_PADDING: CGFloat = 20
+        static let TITLE_PADDING: CGFloat = 10
         static let TITLE_FONT_SIZE: CGFloat = 16
         static let ERROR_TITLE_FONT_SIZE: CGFloat = 18
         static let DESCRIPTION_FONT_SIZE: CGFloat = 14
         static let DEFAULT_CATEGORY = NewsCategory.entertainment
         static let FOOTER_HEIGHT: CGFloat = 100
      }
+    
+    struct NewsDetailConstant {
+        static let IMAGE_HEIGHT: CGFloat = 1/3
+    }
 }

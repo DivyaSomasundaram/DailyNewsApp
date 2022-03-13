@@ -9,7 +9,6 @@ import UIKit
 
 class NewsListViewController: UIViewController {
     var viewModel:NewsListViewModel?
-    private var newsListArray = [News]()
     
     lazy private var newsListTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -77,18 +76,17 @@ class NewsListViewController: UIViewController {
     /// Loades news data and updates the UI.
     @objc private func loadNewsData() {
         self.showLoader()
-        viewModel?.getNewsData() {[weak self] newsList, error in
+        viewModel?.getNewsData() {[weak self] error in
             DispatchQueue.main.async { [weak self] in
                 self?.hideLoader()
                 guard let weakSelf = self else {
                     return
                 }
                 if error == nil {
-                    if let newsList = newsList {
+                    if let newsList = weakSelf.viewModel?.newsListArray, !newsList.isEmpty {
                         weakSelf.newsListTableView.isHidden = false
                         weakSelf.errorLabel.isHidden = true
                         weakSelf.tryAgainButton.isHidden = true
-                        weakSelf.newsListArray = newsList
                         weakSelf.newsListTableView.reloadData()
                     } else {
                         weakSelf.errorLabel.isHidden = false
@@ -108,7 +106,7 @@ class NewsListViewController: UIViewController {
     private func setupConstraints() {
         newsListTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.NewsListConstants.TITLE_PADDING).isActive = true
         newsListTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.NewsListConstants.TITLE_PADDING).isActive = true
-        newsListTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
+        newsListTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         newsListTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
         
         errorLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
@@ -135,24 +133,30 @@ class NewsListViewController: UIViewController {
 // MARK: Table view Delegate.
 extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return newsListArray.count
+        return self.viewModel?.newsListArray.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: Constants.NewsListConstants.CELL_IDENTIFIER, for: indexPath) as? NewsListCell {
-            let newsObject = newsListArray[indexPath.row]
-            cell.newsTitleLabel.text = newsObject.title
-            cell.tag = indexPath.row
-            cell.newsDescriptionLabel.text = newsObject.description
-            cell.loadNewsImage(path: newsObject.imageUrl, index: indexPath)
-            return cell
-        } else {
-            return UITableViewCell()
+            if let newsObject =  self.viewModel?.newsListArray[indexPath.row] {
+                cell.newsTitleLabel.text = newsObject.title
+                cell.tag = indexPath.row
+                cell.newsDescriptionLabel.text = newsObject.description
+                cell.loadNewsImage(path: newsObject.imageUrl, index: indexPath)
+                return cell
+            }
         }
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.NewsListConstants.DEFAULT_CELL_HEIGHT
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let newsObject =  self.viewModel?.newsListArray[indexPath.row] {
+            viewModel?.goToNewsDetailPage(news: newsObject)
+        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -164,13 +168,12 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
             // calling API for more data.
             guard !(viewModel?.isPaginating ?? false) else { return }
             self.newsListTableView.tableFooterView = createSpinnerFooter()
-            viewModel?.getNewsData(pagination: true) {[weak self] newsList, error in
+            viewModel?.getNewsData(pagination: true) {[weak self] error in
                 guard let weakSelf = self else { return }
                 DispatchQueue.main.async {
                     weakSelf.newsListTableView.tableFooterView = nil
                     guard let weakSelf = self else { return }
-                    if error == nil, let newsList = newsList {
-                        weakSelf.newsListArray.append(contentsOf: newsList)
+                    if error == nil {
                         weakSelf.newsListTableView.reloadData()
                     }
                 }

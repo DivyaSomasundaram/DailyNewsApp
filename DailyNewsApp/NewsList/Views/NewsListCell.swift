@@ -26,7 +26,7 @@ class NewsListCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: Constants.NewsListConstants.DESCRIPTION_FONT_SIZE)
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.textAlignment = .left
         label.backgroundColor = .clear
         label.textColor = .darkGray
@@ -92,16 +92,19 @@ class NewsListCell: UITableViewCell {
     ///   - index: cell index.
     func loadNewsImage(path: String?, index: IndexPath) {
         if let imagePath = path, self.tag == index.row {
-            self.newsImageView.image = UIImage(named: "Placeholder")
             self.actvityIndicator.startAnimating()
             viewModel.getNewsImage(path: imagePath) { imageData, error in
                 DispatchQueue.main.async {
                     self.actvityIndicator.stopAnimating()
                     if let imageData = imageData {
                         self.newsImageView.image = UIImage(data: imageData)
+                    } else {
+                        self.newsImageView.image = UIImage(named: "Placeholder")
                     }
                 }
             }
+        } else {
+            self.newsImageView.image = UIImage(named: "Placeholder")
         }
     }
 }
