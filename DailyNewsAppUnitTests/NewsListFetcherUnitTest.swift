@@ -23,12 +23,11 @@ class NewsListFetcherUnitTest: XCTestCase {
         self.waitForExpectations(timeout: 10.0, handler: nil)
     }
 
-    func test_NewsListViewModel_ResponseError() {
+    func test_NewsListFetcher_ResponseError() {
         newsListFetcher.shouldReturnError = true
         newsListFetcher.error = .serverError
-        let newsListViewModel = NewsListViewModel(fetcher: newsListFetcher)
-        newsListViewModel.getNewsData(pagination: false) { responseError in
-           XCTAssertNotNil(responseError)
+        newsListFetcher.fetchNews(searchQuery: "", category: NewsCategory.entertainment, pageNumber: 0) { newsList, error in
+           XCTAssertNotNil(error)
         }
     }
 
