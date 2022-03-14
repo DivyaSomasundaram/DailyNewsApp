@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct News: Codable {
+struct News: Codable, Equatable {
     let title: String?
     let description: String?
     let publishedAt: String?
@@ -27,7 +27,14 @@ struct News: Codable {
         case content
         case source
     }
-}
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        if lhs.title == rhs.title {
+            return true
+        } else {
+            return false
+        }
+    }}
 
 struct Source: Codable {
     let id: String?

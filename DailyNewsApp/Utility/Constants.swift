@@ -11,7 +11,7 @@ import UIKit
 struct Constants {
     struct NetworkConstants {
         static let API_KEY = "a87aa2907a464ce6b347a74f85449070"
-        static let DEFAULT_PAGE_SIZE = "20"
+        static let DEFAULT_PAGE_SIZE = "10"
     }
     
     struct NewsListConstants {
@@ -31,6 +31,6 @@ struct Constants {
     struct NewsDetailConstant {
         static let IMAGE_HEIGHT: CGFloat = 1/3
         static let SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ"
-        static let USER_DATE_FORMAT = "dd-MM-YYYY' T 'hh:mm:ss"
+        static let USER_DATE_FORMAT = "dd-MM-YYYY hh:mm a"
     }
 }

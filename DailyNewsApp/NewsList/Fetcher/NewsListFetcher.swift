@@ -9,26 +9,26 @@ import Foundation
 
 class NewsListFetcher: NewsDataDelegate {
     
-    func fetchNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
+    func fetchNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping(_ newsList: [News]?,_ error: APIError?) -> ()) {
         if NetworkReachability.shared.isNetworkAvailable() {
             NetworkManager.request(endpoint: DailyNewsEndpoint.getTopHeadlines(searchQuery: searchQuery, category: category, pageNumber: pageNumber)) { [weak self] (result: Result<Data, Error>) in
                 switch(result) {
                 case .success(let data):
                     self?.processResponse(data, completion: completion)
                 case .failure(let error):
-                    completion(nil, error)
+                    // set API Error for different server error codes here.
+                    completion(nil, APIError.responseError)
                     print(error)
                 }
             }
         } else {
-            let error = NSError(domain: "", code: 0, userInfo: [ NSLocalizedDescriptionKey: "No Internet. Please try again later"])
-            completion(nil, error)
+            completion(nil, APIError.networkError)
         }
     }
     
     /// Process the response and decode the object.
     /// - Parameter data: data from the server
-    func processResponse(_ data: Data, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) {
+    func processResponse(_ data: Data, completion: @escaping(_ newsList: [News]?,_ error: APIError?) -> ()) {
         do {
             let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
             print(json)
@@ -38,12 +38,14 @@ class NewsListFetcher: NewsDataDelegate {
                 let newsList = newsListResponse.articles
                 completion (newsList, nil)
             } else if newsListResponse.status == NetworkAPIStatus.error.rawValue {
-                let error = NSError(domain: "", code: 0, userInfo: [ NSLocalizedDescriptionKey: newsListResponse.message ?? "Network error.Please try again."])
-                completion(nil, error)
+                completion(nil, APIError.responseError)
             }
         } catch {
-            completion(nil, error)
-            print(error)
+            if let error = error as? APIError {
+                completion(nil, error)
+            } else {
+                print(error)
+            }
         }
     }
 }

@@ -8,5 +8,5 @@
 import Foundation
 
 protocol NewsDataDelegate {
-    func fetchNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping(_ newsList: [News]?,_ error: Error?) -> ()) 
+    func fetchNews(searchQuery: String?, category: NewsCategory?, pageNumber: Int?, completion: @escaping(_ newsList: [News]?,_ error: APIError?) -> ()) 
 }

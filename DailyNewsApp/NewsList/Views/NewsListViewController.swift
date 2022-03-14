@@ -56,14 +56,14 @@ class NewsListViewController: UIViewController {
         loadNewsData()
     }
     
-    func setUpPullToRefresh() {
+    private func setUpPullToRefresh() {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         newsListTableView.refreshControl = refreshControl
         setSubviewAccessibility()
     }
     
-    func setSubviewAccessibility() {
+    private func setSubviewAccessibility() {
         guard let titleLabel = newsListTableView.refreshControl?.subviews.first?.subviews.last as? UILabel else {
             return
         }
@@ -82,7 +82,7 @@ class NewsListViewController: UIViewController {
     
     
     /// Loades news data and updates the UI.
-    @objc private func loadNewsData() {
+    @objc func loadNewsData() {
         self.showLoader()
         viewModel?.getNewsData() {[weak self] error in
             DispatchQueue.main.async { [weak self] in
@@ -146,6 +146,8 @@ extension NewsListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: Constants.NewsListConstants.CELL_IDENTIFIER, for: indexPath) as? NewsListCell {
+            cell.selectionStyle = .none
+            cell.accessoryType = .disclosureIndicator
             if let newsObject =  self.viewModel?.newsListArray[indexPath.row] {
                 cell.newsTitleLabel.text = newsObject.title
                 cell.tag = indexPath.row

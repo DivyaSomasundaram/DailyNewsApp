@@ -16,7 +16,7 @@ class NewsDetailViewModel {
     ///Image of news.
     var newsImage: UIImage?
     
-    init(news: News) {
+    init(news: News?) {
         self.news = news
     }
     
@@ -28,6 +28,7 @@ class NewsDetailViewModel {
         serverFormat.dateFormat = Constants.NewsDetailConstant.SERVER_DATE_FORMAT
         if let date = serverFormat.date(from: serverDate) {
             let userFormat = DateFormatter()
+            userFormat.timeZone = NSTimeZone.local
             userFormat.dateFormat = Constants.NewsDetailConstant.USER_DATE_FORMAT
             let dateString = userFormat.string(from: date)
             return dateString
